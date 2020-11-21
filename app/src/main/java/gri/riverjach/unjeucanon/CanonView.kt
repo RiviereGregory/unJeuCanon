@@ -20,6 +20,7 @@ class CanonView @JvmOverloads constructor(
     var drawing = false
     lateinit var thread: Thread
     val canon = Canon(0f, 0f, 0f, 0f, this)
+    val balle = BalleCanon(this)
 
     init {
         backgroundPaint.color = Color.WHITE
@@ -50,6 +51,9 @@ class CanonView @JvmOverloads constructor(
         canon.canonLongueur = (w / 8f)
         canon.largeur = (w / 24f)
         canon.setFinCanon(h / 2f)
+        balle.canonballRadius = (w / 36f)
+        balle.canonballVitesse = (w * 3 / 2f)
+        balle.launch(0.0)
     }
 
     fun draw() {
@@ -63,6 +67,9 @@ class CanonView @JvmOverloads constructor(
                 backgroundPaint
             )
             canon.draw(canvas)
+            if (balle.canonballOnScreen) {
+                balle.draw(canvas)
+            }
             holder.unlockCanvasAndPost(canvas)
         }
     }
