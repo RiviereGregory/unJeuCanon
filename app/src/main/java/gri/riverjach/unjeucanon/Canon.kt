@@ -23,4 +23,9 @@ class Canon(
     fun setFinCanon(hauteur: Float) {
         finCanon.set(canonLongueur, hauteur)
     }
+
+    fun align(angle: Double) {
+        finCanon.x = (canonLongueur * Math.sin(angle)).toFloat()
+        finCanon.y = (-canonLongueur * Math.cos(angle) + view.screenHeight / 2).toFloat()
+    }
 }

@@ -4,7 +4,9 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.Point
 import android.util.AttributeSet
+import android.view.MotionEvent
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 
@@ -20,9 +22,10 @@ class CanonView @JvmOverloads constructor(
     var drawing = false
     lateinit var thread: Thread
     val canon = Canon(0f, 0f, 0f, 0f, this)
-    val balle = BalleCanon(this)
     val obstacle = Obstacle(0f, 0f, 0f, 0f, 0f, this)
     val cible = Cible(0f, 0f, 0f, 0f, 0f, this)
+    val balle = BalleCanon(this, obstacle, cible)
+    var shotsFired = 0
 
     init {
         backgroundPaint.color = Color.WHITE
@@ -60,7 +63,6 @@ class CanonView @JvmOverloads constructor(
         canon.setFinCanon(h / 2f)
         balle.canonballRadius = (w / 36f)
         balle.canonballVitesse = (w * 3 / 2f)
-        balle.launch(0.0)
         obstacle.obstacleDistance = (w * 5 / 8f)
         obstacle.obstacleDebut = (h / 8f)
         obstacle.obstacleFin = (h * 3 / 8f)
@@ -99,7 +101,39 @@ class CanonView @JvmOverloads constructor(
         val interval = elapsedTimeMS / 1000.0
         obstacle.update(interval)
         cible.update(interval)
+        balle.update(interval)
     }
+
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        val action = event.action
+        if (action == MotionEvent.ACTION_DOWN || action == MotionEvent.ACTION_MOVE) {
+            fireCanonball(event)
+        }
+        return true
+    }
+
+    fun fireCanonball(event: MotionEvent) {
+        if (balle.canonballOnScreen) {
+            val angle = alignCanon(event)
+            balle.launch(angle)
+            ++shotsFired
+        }
+    }
+
+    fun alignCanon(event: MotionEvent): Double {
+        val touchPoint = Point(event.x.toInt(), event.y.toInt())
+        val centerMinusY = screenHeight / 2 - touchPoint.y
+        var angle = 0.0
+        if (centerMinusY != 0.0f) {
+            angle = Math.atan((touchPoint.x).toDouble() / centerMinusY)
+        }
+        if (touchPoint.y > screenHeight / 2) {
+            angle += Math.PI
+        }
+        canon.align(angle)
+        return angle
+    }
+
 
     override fun surfaceCreated(p0: SurfaceHolder?) {
         // Not used

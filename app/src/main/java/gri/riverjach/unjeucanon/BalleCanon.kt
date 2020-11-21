@@ -5,7 +5,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.PointF
 
-class BalleCanon(var view: CanonView) {
+class BalleCanon(var view: CanonView, val obstacle: Obstacle, val cible: Cible) {
     var canonball = PointF()
     var canonballVitesse = 0f
     var canonballVitesseX = 0f
@@ -30,6 +30,33 @@ class BalleCanon(var view: CanonView) {
         canvas.drawCircle(canonball.x, canonball.y, canonballRadius, canonballPaint)
     }
 
+    fun update(interval: Double) {
+        if (canonballOnScreen) {
+            canonball.x += (interval * canonballVitesseX).toFloat()
+            canonball.y += (interval * canonballVitesseY).toFloat()
+
+            if (canonball.x + canonballRadius > obstacle.obstacle.left
+                && canonball.y + canonballRadius > obstacle.obstacle.top
+                && canonball.y - canonballRadius < obstacle.obstacle.bottom
+            ) {
+                canonballVitesseX *= -1
+                canonball.offset((3 * canonballVitesseX * interval).toFloat(), 0f)
+            } else if (canonball.x + canonballRadius > view.screenWidth
+                && canonball.x - canonballRadius < 0
+            ) {
+                canonballOnScreen = false
+            } else if (canonball.y + canonballRadius > view.screenHeight
+                && canonball.y - canonballRadius < 0
+            ) {
+                canonballOnScreen = false
+            } else if (canonball.x + canonballRadius > cible.cible.left
+                && canonball.y + canonballRadius > cible.cible.top
+                && canonball.y - canonballRadius < cible.cible.bottom
+            ) {
+                //cible.detectChoc(this)
+            }
+        }
+    }
 
 
 }
