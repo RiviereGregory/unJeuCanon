@@ -22,6 +22,7 @@ class CanonView @JvmOverloads constructor(
     val canon = Canon(0f, 0f, 0f, 0f, this)
     val balle = BalleCanon(this)
     val obstacle = Obstacle(0f, 0f, 0f, 0f, 0f, this)
+    val cible = Cible(0f, 0f, 0f, 0f, 0f, this)
 
     init {
         backgroundPaint.color = Color.WHITE
@@ -59,8 +60,14 @@ class CanonView @JvmOverloads constructor(
         obstacle.obstacleDebut = (h / 8f)
         obstacle.obstacleFin = (h * 3 / 8f)
         obstacle.width = (w / 24f)
-        obstacle.initialObstacleVitesse = (h / 2f)
+        obstacle.obstacleVitesseInitiale = (h / 2f)
         obstacle.setRect()
+        cible.width = (w / 24f)
+        cible.cibleDistance = (w * 7 / 8f)
+        cible.cibleDebut = (h / 8f)
+        cible.cibleFin = (h * 7 / 8f)
+        cible.cibleVitesseInitiale = (-h / 4f)
+        cible.setRect()
     }
 
     fun draw() {
@@ -78,6 +85,7 @@ class CanonView @JvmOverloads constructor(
                 balle.draw(canvas)
             }
             obstacle.draw(canvas)
+            cible.draw(canvas)
             holder.unlockCanvasAndPost(canvas)
         }
     }

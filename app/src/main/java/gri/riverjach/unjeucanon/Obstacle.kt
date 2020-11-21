@@ -9,17 +9,17 @@ class Obstacle(
     var obstacleDistance: Float,
     var obstacleDebut: Float,
     var obstacleFin: Float,
-    var initialObstacleVitesse: Float,
+    var obstacleVitesseInitiale: Float,
     var width: Float,
     var view: CanonView
 ) {
     val obstacle = RectF(obstacleDistance, obstacleDebut, obstacleDistance + width, obstacleFin)
     val obstaclePaint = Paint()
-    var obstacleVitesse = initialObstacleVitesse
+    var obstacleVitesse = obstacleVitesseInitiale
 
     fun setRect() {
         obstacle.set(obstacleDistance, obstacleDebut, obstacleDistance + width, obstacleFin)
-        obstacleVitesse = initialObstacleVitesse
+        obstacleVitesse = obstacleVitesseInitiale
     }
 
     fun draw(canvas: Canvas) {
