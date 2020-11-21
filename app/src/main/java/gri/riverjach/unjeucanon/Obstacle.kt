@@ -26,4 +26,14 @@ class Obstacle(
         obstaclePaint.color = Color.RED
         canvas.drawRect(obstacle, obstaclePaint)
     }
+
+    fun update(interval: Double) {
+        var up = (interval * obstacleVitesse).toFloat()
+        obstacle.offset(0f, up)
+        if (obstacle.top < 0 || obstacle.bottom > view.screenHeight) {
+            obstacleVitesse *= -1f
+            up = (interval * 3 * obstacleVitesse).toFloat()
+            obstacle.offset(0f, up)
+        }
+    }
 }

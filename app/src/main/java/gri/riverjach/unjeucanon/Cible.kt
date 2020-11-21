@@ -45,4 +45,14 @@ class Cible(
         cibleVitesse = cibleVitesseInitiale
         longueurPiece = (cibleFin - cibleDebut) / CIBLE_PIECES
     }
+
+    fun update(interval: Double) {
+        var up = (interval * cibleVitesse).toFloat()
+        cible.offset(0f, up)
+        if (cible.top < 0 || cible.bottom > view.screenHeight) {
+            cibleVitesse *= -1f
+            up = (interval * 3 * cibleVitesse).toFloat()
+            cible.offset(0f, up)
+        }
+    }
 }

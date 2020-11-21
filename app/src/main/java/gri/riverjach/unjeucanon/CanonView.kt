@@ -40,8 +40,13 @@ class CanonView @JvmOverloads constructor(
     }
 
     override fun run() {
+        var previousframeTime = System.currentTimeMillis()
         while (drawing) {
+            val currentTime = System.currentTimeMillis()
+            val elapsedTimeMS = (currentTime - previousframeTime).toDouble()
+            updatePostions(elapsedTimeMS)
             draw()
+            previousframeTime = currentTime
         }
     }
 
@@ -88,6 +93,12 @@ class CanonView @JvmOverloads constructor(
             cible.draw(canvas)
             holder.unlockCanvasAndPost(canvas)
         }
+    }
+
+    fun updatePostions(elapsedTimeMS: Double) {
+        val interval = elapsedTimeMS / 1000.0
+        obstacle.update(interval)
+        cible.update(interval)
     }
 
     override fun surfaceCreated(p0: SurfaceHolder?) {
