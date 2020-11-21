@@ -113,7 +113,7 @@ class CanonView @JvmOverloads constructor(
     }
 
     fun fireCanonball(event: MotionEvent) {
-        if (balle.canonballOnScreen) {
+        if (!balle.canonballOnScreen) {
             val angle = alignCanon(event)
             balle.launch(angle)
             ++shotsFired

@@ -55,4 +55,12 @@ class Cible(
             cible.offset(0f, up)
         }
     }
+
+    fun detectChoc(balle: BalleCanon) {
+        val section = ((balle.canonball.y - cible.top) / longueurPiece).toInt()
+        if (section >= 0 && section < CIBLE_PIECES && !cibleTouchee[section]) {
+            cibleTouchee[section] = true
+        }
+        balle.resetCanonBall()
+    }
 }

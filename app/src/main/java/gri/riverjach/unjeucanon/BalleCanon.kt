@@ -10,7 +10,7 @@ class BalleCanon(var view: CanonView, val obstacle: Obstacle, val cible: Cible) 
     var canonballVitesse = 0f
     var canonballVitesseX = 0f
     var canonballVitesseY = 0f
-    var canonballOnScreen = true
+    var canonballOnScreen = false
     var canonballRadius = 0f
     var canonballPaint = Paint()
 
@@ -42,21 +42,23 @@ class BalleCanon(var view: CanonView, val obstacle: Obstacle, val cible: Cible) 
                 canonballVitesseX *= -1
                 canonball.offset((3 * canonballVitesseX * interval).toFloat(), 0f)
             } else if (canonball.x + canonballRadius > view.screenWidth
-                && canonball.x - canonballRadius < 0
+                || canonball.x - canonballRadius < 0
             ) {
                 canonballOnScreen = false
             } else if (canonball.y + canonballRadius > view.screenHeight
-                && canonball.y - canonballRadius < 0
+                || canonball.y - canonballRadius < 0
             ) {
                 canonballOnScreen = false
             } else if (canonball.x + canonballRadius > cible.cible.left
                 && canonball.y + canonballRadius > cible.cible.top
                 && canonball.y - canonballRadius < cible.cible.bottom
             ) {
-                //cible.detectChoc(this)
+                cible.detectChoc(this)
             }
         }
     }
 
-
+    fun resetCanonBall() {
+        canonballOnScreen = false
+    }
 }
