@@ -8,13 +8,18 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Point
+import android.media.AudioAttributes
+import android.media.AudioManager
+import android.media.SoundPool
 import android.os.Bundle
 import android.util.AttributeSet
+import android.util.SparseIntArray
 import android.view.MotionEvent
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentActivity
+
 
 class CanonView @JvmOverloads constructor(
     context: Context,
@@ -39,12 +44,32 @@ class CanonView @JvmOverloads constructor(
     var gameOver = false
     var totalElapsedTime = 0.0
     val activity = context as FragmentActivity
+    val soundPool: SoundPool
+    val sounMap: SparseIntArray
 
     init {
         backgroundPaint.color = Color.WHITE
         textPaint.textSize = screenHeight / 20
         textPaint.color = Color.BLACK
         timeLeft = 10.0
+
+        soundPool = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            val audioAttributes = AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_ASSISTANCE_SONIFICATION)
+                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                .build()
+            SoundPool.Builder()
+                .setMaxStreams(1)
+                .setAudioAttributes((audioAttributes))
+                .build()
+        } else {
+            SoundPool(1, AudioManager.STREAM_MUSIC, 0);
+        }
+
+        sounMap = SparseIntArray(3)
+        sounMap.put(0, soundPool.load(context, R.raw.target_hit, 1))
+        sounMap.put(1, soundPool.load(context, R.raw.canon_fire, 1))
+        sounMap.put(2, soundPool.load(context, R.raw.blocker_hit, 1))
     }
 
     fun pause() {
@@ -198,6 +223,7 @@ class CanonView @JvmOverloads constructor(
 
     fun fireCanonball(event: MotionEvent) {
         if (!balle.canonballOnScreen) {
+            soundPool.play(sounMap.get(1), 1f, 1f, 1, 0, 1f)
             val angle = alignCanon(event)
             balle.launch(angle)
             ++shotsFired
@@ -225,6 +251,14 @@ class CanonView @JvmOverloads constructor(
         gameOver = true
     }
 
+    fun playCibleSound() {
+        soundPool.play(sounMap.get(0), 1f, 1f, 1, 0, 1f)
+    }
+
+    fun playObstacleSound() {
+        soundPool.play(sounMap.get(2), 1f, 1f, 1, 0, 1f)
+    }
+
     override fun surfaceCreated(p0: SurfaceHolder?) {
         // Not used
     }
@@ -236,6 +270,4 @@ class CanonView @JvmOverloads constructor(
     override fun surfaceDestroyed(p0: SurfaceHolder?) {
         // Not used
     }
-
-
 }

@@ -64,6 +64,7 @@ class Cible(
             cibleTouchee[section] = true
             balle.resetCanonBall()
             view.increaseTimeLeft()
+            view.playCibleSound()
             nbCiblesTouchees++
             if (nbCiblesTouchees == CIBLE_PIECES) {
                 view.gameOver()
