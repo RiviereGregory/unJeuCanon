@@ -24,7 +24,9 @@ class Cible(
         currentPoint.x = cible.left
         currentPoint.y = cible.top
         for (i in 0 until CIBLE_PIECES) {
-            if (i % 2 != 0) {
+            if (cibleTouchee[i]){
+                ciblePaint.color = Color.GREEN
+            } else if (i % 2 != 0) {
                 ciblePaint.color = Color.BLUE
             } else {
                 ciblePaint.color = Color.YELLOW
