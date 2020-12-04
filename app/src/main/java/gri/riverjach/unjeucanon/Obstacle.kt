@@ -36,4 +36,9 @@ class Obstacle(
             obstacle.offset(0f, up)
         }
     }
+
+    fun resetObstacle() {
+        obstacleVitesse = obstacleVitesseInitiale
+        obstacle.set(obstacleDistance, obstacleDebut, obstacleDistance + width, obstacleFin)
+    }
 }

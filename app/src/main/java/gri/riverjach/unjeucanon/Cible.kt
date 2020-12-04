@@ -62,6 +62,19 @@ class Cible(
             cibleTouchee[section] = true
             balle.resetCanonBall()
             view.increaseTimeLeft()
+            nbCiblesTouchees++
+            if (nbCiblesTouchees == CIBLE_PIECES) {
+                view.gameOver()
+            }
         }
+    }
+
+    fun resetCible() {
+        for (i in 0 until CIBLE_PIECES) {
+            cibleTouchee[i] = false
+        }
+        nbCiblesTouchees = 0
+        cibleVitesse = cibleVitesseInitiale
+        cible.set(cibleDistance, cibleDebut, cibleDistance + width, cibleFin)
     }
 }

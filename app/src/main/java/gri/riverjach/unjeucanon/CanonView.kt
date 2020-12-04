@@ -1,14 +1,20 @@
 package gri.riverjach.unjeucanon
 
+import android.app.AlertDialog
+import android.app.Dialog
 import android.content.Context
+import android.content.DialogInterface
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Point
+import android.os.Bundle
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.SurfaceHolder
 import android.view.SurfaceView
+import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.FragmentActivity
 
 class CanonView @JvmOverloads constructor(
     context: Context,
@@ -30,6 +36,9 @@ class CanonView @JvmOverloads constructor(
     var timeLeft = 0.0
     val MISS_PENALTY = 2
     val HIT_REWARD = 3
+    var gameOver = false
+    var totalElapsedTime = 0.0
+    val activity = context as FragmentActivity
 
     init {
         backgroundPaint.color = Color.WHITE
@@ -54,6 +63,7 @@ class CanonView @JvmOverloads constructor(
         while (drawing) {
             val currentTime = System.currentTimeMillis()
             val elapsedTimeMS = (currentTime - previousframeTime).toDouble()
+            totalElapsedTime += elapsedTimeMS / 1000.0
             updatePostions(elapsedTimeMS)
             draw()
             previousframeTime = currentTime
@@ -114,7 +124,60 @@ class CanonView @JvmOverloads constructor(
         cible.update(interval)
         balle.update(interval)
         timeLeft -= interval
-        if (timeLeft <= 0.0) drawing = false
+        if (timeLeft <= 0.0) {
+            timeLeft = 0.0
+            gameOver = true
+            drawing = false
+            showGameOverDialog(R.string.lose)
+        }
+    }
+
+    fun showGameOverDialog(messageId: Int) {
+        class GameResult : DialogFragment() {
+            override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+                val builder = AlertDialog.Builder(activity)
+                builder.setTitle(resources.getString(messageId))
+                builder.setMessage(
+                    resources.getString(
+                        R.string.results_format,
+                        shotsFired,
+                        totalElapsedTime
+                    )
+                )
+                builder.setPositiveButton(
+                    R.string.reset_game,
+                    DialogInterface.OnClickListener { _, _ -> newGame() })
+                return builder.create()
+            }
+        }
+
+        activity.runOnUiThread(Runnable {
+            val ft = activity.supportFragmentManager.beginTransaction()
+            val prev = activity.supportFragmentManager.findFragmentByTag("dialog")
+            if (prev != null) {
+                ft.remove(prev)
+            }
+            ft.addToBackStack(null)
+            val gameResult = GameResult()
+            gameResult.isCancelable = false
+            gameResult.show(ft, "dialog")
+        })
+
+    }
+
+    fun newGame() {
+        cible.resetCible()
+        obstacle.resetObstacle()
+        timeLeft = 10.0
+        balle.resetCanonBall()
+        shotsFired = 0
+        totalElapsedTime = 0.0
+        drawing = true
+        if (gameOver) {
+            gameOver = false
+            thread = Thread(this)
+            thread.start()
+        }
     }
 
     fun reduceTimeLeft() {
@@ -155,6 +218,12 @@ class CanonView @JvmOverloads constructor(
         return angle
     }
 
+
+    fun gameOver() {
+        drawing = false
+        showGameOverDialog(R.string.win)
+        gameOver = true
+    }
 
     override fun surfaceCreated(p0: SurfaceHolder?) {
         // Not used
