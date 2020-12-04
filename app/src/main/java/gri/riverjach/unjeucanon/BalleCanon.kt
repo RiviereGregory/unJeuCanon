@@ -41,6 +41,7 @@ class BalleCanon(var view: CanonView, val obstacle: Obstacle, val cible: Cible) 
             ) {
                 canonballVitesseX *= -1
                 canonball.offset((3 * canonballVitesseX * interval).toFloat(), 0f)
+                view.reduceTimeLeft()
             } else if (canonball.x + canonballRadius > view.screenWidth
                 || canonball.x - canonballRadius < 0
             ) {

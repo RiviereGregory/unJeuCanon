@@ -60,7 +60,8 @@ class Cible(
         val section = ((balle.canonball.y - cible.top) / longueurPiece).toInt()
         if (section >= 0 && section < CIBLE_PIECES && !cibleTouchee[section]) {
             cibleTouchee[section] = true
+            balle.resetCanonBall()
+            view.increaseTimeLeft()
         }
-        balle.resetCanonBall()
     }
 }

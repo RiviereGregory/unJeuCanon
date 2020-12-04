@@ -17,6 +17,7 @@ class CanonView @JvmOverloads constructor(
 ) : SurfaceView(context, attributes, defStyleAttr), SurfaceHolder.Callback, Runnable {
     lateinit var canvas: Canvas
     val backgroundPaint = Paint()
+    val textPaint = Paint()
     var screenWidth = 0f
     var screenHeight = 0f
     var drawing = false
@@ -26,9 +27,15 @@ class CanonView @JvmOverloads constructor(
     val cible = Cible(0f, 0f, 0f, 0f, 0f, this)
     val balle = BalleCanon(this, obstacle, cible)
     var shotsFired = 0
+    var timeLeft = 0.0
+    val MISS_PENALTY = 2
+    val HIT_REWARD = 3
 
     init {
         backgroundPaint.color = Color.WHITE
+        textPaint.textSize = screenHeight / 20
+        textPaint.color = Color.BLACK
+        timeLeft = 10.0
     }
 
     fun pause() {
@@ -75,6 +82,8 @@ class CanonView @JvmOverloads constructor(
         cible.cibleFin = (h * 7 / 8f)
         cible.cibleVitesseInitiale = (-h / 4f)
         cible.setRect()
+        textPaint.setTextSize(w / 20f)
+        textPaint.isAntiAlias = true
     }
 
     fun draw() {
@@ -87,6 +96,8 @@ class CanonView @JvmOverloads constructor(
                 canvas.height.toFloat(),
                 backgroundPaint
             )
+            val formatted = String.format("%.2f", timeLeft)
+            canvas.drawText("il reste $formatted seconds. ", 30f, 50f, textPaint)
             canon.draw(canvas)
             if (balle.canonballOnScreen) {
                 balle.draw(canvas)
@@ -102,6 +113,16 @@ class CanonView @JvmOverloads constructor(
         obstacle.update(interval)
         cible.update(interval)
         balle.update(interval)
+        timeLeft -= interval
+        if (timeLeft <= 0.0) drawing = false
+    }
+
+    fun reduceTimeLeft() {
+        timeLeft -= MISS_PENALTY
+    }
+
+    fun increaseTimeLeft() {
+        timeLeft += HIT_REWARD
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
