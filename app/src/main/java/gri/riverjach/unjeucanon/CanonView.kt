@@ -53,18 +53,19 @@ class CanonView @JvmOverloads constructor(
         textPaint.color = Color.BLACK
         timeLeft = 10.0
 
-        soundPool = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-            val audioAttributes = AudioAttributes.Builder()
-                .setUsage(AudioAttributes.USAGE_ASSISTANCE_SONIFICATION)
-                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                .build()
-            SoundPool.Builder()
-                .setMaxStreams(1)
-                .setAudioAttributes((audioAttributes))
-                .build()
-        } else {
-            SoundPool(1, AudioManager.STREAM_MUSIC, 0);
-        }
+        soundPool =
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                val audioAttributes = AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_ASSISTANCE_SONIFICATION)
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                    .build()
+                SoundPool.Builder()
+                    .setMaxStreams(1)
+                    .setAudioAttributes((audioAttributes))
+                    .build()
+            } else {
+                SoundPool(1, AudioManager.STREAM_MUSIC, 0);
+            }
 
         sounMap = SparseIntArray(3)
         sounMap.put(0, soundPool.load(context, R.raw.target_hit, 1))
@@ -259,15 +260,15 @@ class CanonView @JvmOverloads constructor(
         soundPool.play(sounMap.get(2), 1f, 1f, 1, 0, 1f)
     }
 
-    override fun surfaceCreated(p0: SurfaceHolder?) {
+    override fun surfaceCreated(p0: SurfaceHolder) {
         // Not used
     }
 
-    override fun surfaceChanged(p0: SurfaceHolder?, p1: Int, p2: Int, p3: Int) {
+    override fun surfaceChanged(p0: SurfaceHolder, p1: Int, p2: Int, p3: Int) {
         // Not used
     }
 
-    override fun surfaceDestroyed(p0: SurfaceHolder?) {
+    override fun surfaceDestroyed(p0: SurfaceHolder) {
         // Not used
     }
 }
